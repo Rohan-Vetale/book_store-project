@@ -16,7 +16,7 @@ from sqlalchemy.orm import Session
 from core.model import Users, get_db
 from core.schema import UserDetails, Userlogin
 from passlib.hash import sha256_crypt
-
+from core.settings import super_key
 router_user = APIRouter()
 jwt_handler = JWT()
 
@@ -31,15 +31,19 @@ def user_registration(body: UserDetails, response: Response, db: Session = Depen
     try:
         user_data = body.model_dump()
         user_data['password'] = sha256_crypt.hash(user_data['password'])
+        #if user has provided valid super key user is super user
+        if user_data['super_key'] == super_key:
+            user_data['is_super_user'] = True
+        user_data.pop('super_key')
         new_user = Users(**user_data)
         db.add(new_user)
         db.commit()
-        print("after db commit ")
+        
         token = jwt_handler.jwt_encode({'user_id': new_user.id})
         #using celery to send mail
-        print(f"token is {token}")
+        
         result = send_verification_mail(token, new_user.email)
-        print("after send verification ")
+        
         db.refresh(new_user)
         return {"status": 201, "message": "Registered successfully, check your mail to verify email", 'data': new_user, 'token' : token}
     except Exception as e:

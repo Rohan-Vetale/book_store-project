@@ -78,7 +78,7 @@ def send_verification_mail(verification_token : str, email):
         sender_email = SENDER_EMAIL
         sender_password = SENDER_PASSWORD
         recipient_email = email
-        print(f"Compose the email")
+        
         # Compose the email
         subject = 'Email Verification'
         body = f"Click the link to verify your email: http://127.0.0.1:8080/user/verify?token={verification_token}"
@@ -88,7 +88,7 @@ def send_verification_mail(verification_token : str, email):
         msg['Subject'] = subject
 
         msg.attach(MIMEText(body, 'plain'))
-        print(f"Set up the SMTP server and send the email")
+       
         # Set up the SMTP server and send the email
         server = smtplib.SMTP('smtp.gmail.com', 587)
         server.starttls()

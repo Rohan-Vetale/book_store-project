@@ -23,6 +23,7 @@ class UserDetails(BaseModel):
     state: str = Field(default='Enter your state Name', title='Enter your state Name')
     phone: int = Field(default='Enter phone number', title='Enter phone number')
     is_verified: Optional[bool] = Field(default=False)
+    super_key: Optional[str] = None
     
 class Userlogin(BaseModel):
     user_name: str = Field(default='Enter user name', title='Enter User name')
