@@ -148,3 +148,42 @@ def request_loger(request):
         log.count += 1
 
     db.commit()
+    
+def send_confirmation_mail( email: str,message_body:str):
+    """
+    Description:
+    Function to send order confirmation over provided email using smtp
+
+    Parameter:
+    message_body : message to be sent to the user
+    email : email of whom we want to send the message as a mail
+
+    Return:
+    None
+    """
+    try:
+        # Your Gmail account details
+        sender_email = SENDER_EMAIL
+        sender_password = SENDER_PASSWORD
+        recipient_email = email
+        
+        # Compose the email
+        subject = 'Order Confirmation'
+        body = message_body
+        msg = MIMEMultipart()
+        msg['From'] = sender_email
+        msg['To'] = recipient_email
+        msg['Subject'] = subject
+
+        msg.attach(MIMEText(body, 'plain'))
+       
+        # Set up the SMTP server and send the email
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(sender_email, sender_password)
+
+        server.sendmail(sender_email, recipient_email, msg.as_string())
+        
+        server.quit()
+    except Exception as e:
+        print(e)

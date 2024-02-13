@@ -40,6 +40,7 @@ class Users(Base):
     is_verified = Column(Boolean, default=False)
     is_super_user = Column(Boolean, default=False)
     books = relationship('Books', back_populates='users')
+    cart = relationship('Cart', back_populates='users')
     def __repr__(self):
         return self.user_name
     
@@ -52,6 +53,7 @@ class Books(Base):
     quantity = Column(BigInteger, nullable=False)
     user_id = Column(BigInteger, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     users = relationship('Users', back_populates='books') 
+    cart_items = relationship('CartItems', back_populates='book')
 
 
 
@@ -68,9 +70,9 @@ class Cart(Base):
     total_price = Column(BigInteger, default=0)
     total_quantity = Column(BigInteger, default=0)
     is_ordered = Column(Boolean, default=False)
-    user_id = Column(BigInteger, ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
-    user = relationship('Users', back_populates='cart')
-    cart_items = relationship('CartIems', back_populates='cart')
+    user_id = Column(BigInteger, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    users = relationship('Users', back_populates='cart')
+    cart_items = relationship('CartItems', back_populates='cart')
     
     
 class CartItems(Base):

@@ -1,3 +1,14 @@
+"""
+@Author: Rohan Vetale
+
+@Date: 2024-02-13 12:40
+
+@Last Modified by: Rohan Vetale
+
+@Last Modified time: 2024-02-14 19:23
+
+@Title : Book store book module
+"""
 from fastapi import APIRouter, Depends, Request, Response, HTTPException, status
 from sqlalchemy.orm import Session
 from core.model import Users, Books, get_db
@@ -5,7 +16,7 @@ from core.schema import BookSchema
 
 router_books = APIRouter()
 
-@router_books.post("/add_book", status_code=status.HTTP_201_CREATED, tags=["books"])
+@router_books.post("/add_book", status_code=status.HTTP_201_CREATED, tags=["Books"])
 def add_book(payload: BookSchema, request: Request, response: Response, db: Session = Depends(get_db)):
     """
     Description: Add a new book.
@@ -29,7 +40,7 @@ def add_book(payload: BookSchema, request: Request, response: Response, db: Sess
         response.status_code = status.HTTP_400_BAD_REQUEST
         return {"message": str(e)}
 
-@router_books.get("/get_all_books", status_code=status.HTTP_200_OK, tags=["books"])
+@router_books.get("/get_all_books", status_code=status.HTTP_200_OK, tags=["Books"])
 def read_all_books(request: Request, response: Response, db: Session = Depends(get_db) ):
     """
     Description: Get all books of the authenticated user.
@@ -46,7 +57,7 @@ def read_all_books(request: Request, response: Response, db: Session = Depends(g
     except Exception as e:
         return {"message": str(e)}
 
-@router_books.get("/get_book/{book_id}", status_code=status.HTTP_200_OK, tags=["books"])
+@router_books.get("/get_book/{book_id}", status_code=status.HTTP_200_OK, tags=["Books"])
 def read_book(book_id: int, request: Request, response: Response, db: Session = Depends(get_db)):
     """
     Description: Get details of a specific book.
@@ -63,7 +74,7 @@ def read_book(book_id: int, request: Request, response: Response, db: Session = 
         response.status_code = status.HTTP_400_BAD_REQUEST
         return {"message": str(e)}
 
-@router_books.put("/update_book/{book_id}", status_code=status.HTTP_200_OK, tags=["books"])
+@router_books.put("/update_book/{book_id}", status_code=status.HTTP_200_OK, tags=["Books"])
 def update_book(book_id: int, payload: BookSchema, request: Request, response: Response, db: Session = Depends(get_db)):
     """
     Description: Update details of a specific book.
@@ -85,7 +96,7 @@ def update_book(book_id: int, payload: BookSchema, request: Request, response: R
         response.status_code = status.HTTP_400_BAD_REQUEST
         return {"message": str(e)}
 
-@router_books.delete("/delete_book/{book_id}", status_code=status.HTTP_200_OK, tags=["books"])
+@router_books.delete("/delete_book/{book_id}", status_code=status.HTTP_200_OK, tags=["Books"])
 def delete_book(book_id: int, request: Request, response: Response, db: Session = Depends(get_db)):
     """
     Description: Delete a specific book.
@@ -104,7 +115,7 @@ def delete_book(book_id: int, request: Request, response: Response, db: Session 
         response.status_code = status.HTTP_400_BAD_REQUEST
         return {"message": str(e)}
 
-@router_books.delete("/delete_all_books", status_code=status.HTTP_200_OK, tags=["books"])
+@router_books.delete("/delete_all_books", status_code=status.HTTP_200_OK, tags=["Books"])
 def delete_all_books(request: Request, response: Response, db: Session = Depends(get_db)):
     """
     Description: Delete all book.
