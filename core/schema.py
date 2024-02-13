@@ -35,3 +35,7 @@ class BookSchema(BaseModel):
     price: int = Field(default='Enter the price of book', title='Enter the price of book')
     quantity: int = Field(default='Enter the quantity of book', title='Enter the quantity of book')
     
+class CartItemsSchema(BaseModel):
+    book_id: int = Field(default="Enter the book id")
+    quantity: int = Field(default="Enter the quantity")
+    

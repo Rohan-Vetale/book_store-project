@@ -62,4 +62,23 @@ class RequestLog(Base):
     request_path = Column(String)
     count = Column(BigInteger, default=1)
 
+class Cart(Base):
+    __tablename__ = 'cart'
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    total_price = Column(BigInteger, default=0)
+    total_quantity = Column(BigInteger, default=0)
+    is_ordered = Column(Boolean, default=False)
+    user_id = Column(BigInteger, ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
+    user = relationship('Users', back_populates='cart')
+    cart_items = relationship('CartIems', back_populates='cart')
     
+    
+class CartItems(Base):
+    __tablename__ = 'cart_items'
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    price = Column(BigInteger, default=0)
+    quantity = Column(BigInteger, default=0)
+    book_id = Column(BigInteger, ForeignKey('books.id', ondelete='CASCADE'), nullable=False)
+    cart_id = Column(BigInteger, ForeignKey('cart.id', ondelete='CASCADE'), nullable=False)
+    book = relationship('Books', back_populates='cart_items')
+    cart = relationship('Cart', back_populates='cart_items')
