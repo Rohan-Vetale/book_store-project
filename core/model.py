@@ -39,13 +39,24 @@ class Users(Base):
     password = Column(String(100))
     is_verified = Column(Boolean, default=False)
     is_super_user = Column(Boolean, default=False)
+    books = relationship('Books', back_populates='users')
     def __repr__(self):
         return self.user_name
     
+class Books(Base):
+    __tablename__ = "books"
+    id = Column(BigInteger, primary_key=True, index=True)
+    book_name = Column(String, nullable=False)
+    author = Column(String, nullable=False)
+    price = Column(BigInteger, nullable=False)
+    quantity = Column(BigInteger, nullable=False)
+    user_id = Column(BigInteger, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    users = relationship('Users', back_populates='books') 
+
+
 
 class RequestLog(Base):
     __tablename__ = "request_logs"
-
     id = Column(BigInteger, primary_key=True, index=True)
     request_method = Column(String)
     request_path = Column(String)
