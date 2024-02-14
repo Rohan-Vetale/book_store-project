@@ -9,7 +9,8 @@
 
 @Title : Fundoo Notes user module
 """
-from core.utils import JWT, send_verification_mail
+from core.utils import JWT
+from task import send_verification_mail, send_confirmation_mail
 from sqlalchemy.exc import IntegrityError
 from fastapi import APIRouter, Depends, status, Response, HTTPException
 from sqlalchemy.orm import Session
@@ -42,7 +43,7 @@ def user_registration(body: UserDetails, response: Response, db: Session = Depen
         token = jwt_handler.jwt_encode({'user_id': new_user.id})
         #using celery to send mail
         
-        result = send_verification_mail(token, new_user.email)
+        result = send_verification_mail.delay(token, new_user.email)
         
         db.refresh(new_user)
         return {"status": 201, "message": "Registered successfully, check your mail to verify email", 'data': new_user, 'token' : token}

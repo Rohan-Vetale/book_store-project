@@ -14,7 +14,7 @@ from fastapi import APIRouter, status, Response, Request, Depends, HTTPException
 from sqlalchemy.orm import Session
 from core.schema import CartItemsSchema
 from core.model import get_db, Cart, Books, CartItems, Users
-from core.utils import send_confirmation_mail
+from task import send_confirmation_mail
 
 router_cart = APIRouter()
 
@@ -111,7 +111,7 @@ def confirm_order(response: Response, request: Request, db: Session = Depends(ge
         cart_data.is_ordered = True
         user_data = db.query(Users).filter_by(id=request.state.user.id).one_or_none()
         #send the order confirmation email to the user
-        send_confirmation_mail(email=user_data.email, message_body=message)
+        send_confirmation_mail.delay(email=user_data.email, message_body=message)
         db.commit()
         return {'message': 'Order Confirmed Successfully', 'status': 200}
     except Exception as ex:
