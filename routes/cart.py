@@ -93,6 +93,7 @@ def confirm_order(response: Response, request: Request, db: Session = Depends(ge
         cart_data = db.query(Cart).filter_by(user_id=request.state.user.id).one_or_none()
         if cart_data is None:
             raise HTTPException(detail='The Cart is Empty', status_code=status.HTTP_400_BAD_REQUEST)
+        
         cart_items_details = db.query(CartItems).filter_by(cart_id=cart_data.id).all()
 
         message = f"""
@@ -103,16 +104,21 @@ def confirm_order(response: Response, request: Request, db: Session = Depends(ge
             """
         for data in cart_items_details:
             book_data = db.query(Books).filter_by(id=data.book_id).one_or_none()
-            print(book_data.quantity)
             book_data.quantity -= data.quantity
-            print(book_data.quantity)
             message += f"Book Name : {book_data.book_name}, Quantity is : {data.quantity}, Total Book Price is :{data.price} \n"
 
         cart_data.is_ordered = True
         user_data = db.query(Users).filter_by(id=request.state.user.id).one_or_none()
         #send the order confirmation email to the user
         send_confirmation_mail.delay(email=user_data.email, message_body=message)
+        
+        # Delete cart items and cart associated with this user
+        db.query(CartItems).filter_by(cart_id=cart_data.id).delete()
+        db.query(Cart).filter_by(user_id=request.state.user.id).delete()
+        
+        # Commit the transaction
         db.commit()
+
         return {'message': 'Order Confirmed Successfully', 'status': 200}
     except Exception as ex:
         response.status_code = status.HTTP_400_BAD_REQUEST
