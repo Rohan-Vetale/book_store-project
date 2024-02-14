@@ -26,7 +26,7 @@ def add_book_to_cart(body: CartItemsSchema, response: Response, request: Request
     Return: Message of a book added to cart with status code 201
     """
     try:
-        cart_data = db.query(Cart).filter_by(user_id=request.state.users.id).one_or_none()
+        cart_data = db.query(Cart).filter_by(user_id=request.state.user.id).one_or_none()
         if cart_data is None:
             cart_data = Cart(user_id=request.state.user.id,total_price=0,total_quantity=0)
             db.add(cart_data)
@@ -36,7 +36,7 @@ def add_book_to_cart(body: CartItemsSchema, response: Response, request: Request
         if book_data is None:
             raise HTTPException(detail="This book is not present ", status_code=status.HTTP_400_BAD_REQUEST)
         if body.quantity > book_data.quantity:
-            raise HTTPException(detail=f"Book already exists with quantity {book_data.quantity}",
+            raise HTTPException(detail=f"Book exists with quantity {book_data.quantity}",
                                 status_code=status.HTTP_400_BAD_REQUEST)
 
         total_books_price = body.quantity * book_data.price
@@ -84,6 +84,11 @@ def get_cart_details(request: Request, response: Response, db: Session = Depends
 
 @router_cart.get('/confirm', status_code=status.HTTP_200_OK, tags=["Cart"])
 def confirm_order(response: Response, request: Request, db: Session = Depends(get_db)):
+    """
+    Description: Function used to confirm order and send email
+    Parameter:  response : Response object, db : database session, request: User Request.
+    Return: Message of order confirmation successfull
+    """
     try:
         cart_data = db.query(Cart).filter_by(user_id=request.state.user.id).one_or_none()
         if cart_data is None:
@@ -91,10 +96,10 @@ def confirm_order(response: Response, request: Request, db: Session = Depends(ge
         cart_items_details = db.query(CartItems).filter_by(cart_id=cart_data.id).all()
 
         message = f"""
-                Thank you for conforming the order 
-                Total Quantity : {cart_data.total_quantity}
-                Total Price is : {cart_data.total_price}    
-                Books Details are :
+            Thank you for confirming the order 
+            Total Quantity : {cart_data.total_quantity}
+            Total Price is : {cart_data.total_price}    
+            Books Details are :
             """
         for data in cart_items_details:
             book_data = db.query(Books).filter_by(id=data.book_id).one_or_none()
@@ -108,7 +113,7 @@ def confirm_order(response: Response, request: Request, db: Session = Depends(ge
         #send the order confirmation email to the user
         send_confirmation_mail(email=user_data.email, message_body=message)
         db.commit()
-        return {'message': 'Order Confirmation Successfully', 'status': 200}
+        return {'message': 'Order Confirmed Successfully', 'status': 200}
     except Exception as ex:
         response.status_code = status.HTTP_400_BAD_REQUEST
         return {'message': str(ex), 'status': 400}

@@ -26,6 +26,5 @@ def addmiddleware(request: Request, call_next):
 
 app.include_router(router_user, prefix='/user')
 app.include_router(router_books, prefix='/book',dependencies=[Security(APIKeyHeader(name='authorization')),Depends(jwt_authentication)])
-# app.include_router(router_notes,prefix='/notes',dependencies=[Security(APIKeyHeader(name='authorization')),Depends(jwt_authentication)])
 app.include_router(router_cart, prefix='/cart',dependencies=[Security(APIKeyHeader(name='authorization')),Depends(jwt_authentication)])
 
