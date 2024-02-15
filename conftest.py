@@ -109,3 +109,17 @@ def updated_book_details():
     "price" : "130",
     "quantity" : "120"
     } 
+
+@pytest.fixture
+def cart_details():
+    return {
+    "book_id" : "1",
+    "quantity" : "2"
+    }
+    
+@pytest.fixture
+def wrong_cart_details():
+    return {
+    "book_id" : "1",
+    "quantity" : "200"
+    }
