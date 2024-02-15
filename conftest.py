@@ -81,4 +81,31 @@ def user2_data():
   "phone": "8356853442",
   "is_verified": "true"
     }
+    
+@pytest.fixture
+def book_details():
+    return {
+    "book_name": "Watchmen",
+    "author" : "Alan Moore",
+    "price" : "13",
+    "quantity" : "12"
+    }    
 
+@pytest.fixture
+def wrong_book_details():
+    return {
+    "book_name": "Watchmen",
+    "author" : "Alan Moore",
+    "price" : "abc",
+    "quantity" : "12"
+    } 
+
+
+@pytest.fixture
+def updated_book_details():
+    return {
+    "book_name": "Watchman",
+    "author" : "Alan Moore updated",
+    "price" : "130",
+    "quantity" : "120"
+    } 
