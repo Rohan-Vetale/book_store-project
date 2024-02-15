@@ -30,21 +30,7 @@ def jwt_authentication(request : Request, db:Session = Depends(get_db)):
         print(e)
     
     
-    # user_data = db.query(User).filter_by(id=user_id).one_or_none
-    # print(f"inside jwt authentication function {user_id}")
-    # if user_data is None:
-    #     raise HTTPException(detail='user not found',status_code=400)
-    # request.state.user = user_data
-
-
-# def jwt_authentication(request: Request, db: Session = Depends(get_db)):
-#     token = request.headers.get('authorization')
-#     decode_token = JWT.decode_data(token)
-#     user_id = decode_token.get('user_id')
-#     user = db.query(User).filter_by(id=user_id).one_or_none()
-#     if not user:
-#         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
-#     request.state.user = user
+   
 
 
 class JWT:
